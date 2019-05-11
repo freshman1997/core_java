@@ -1,0 +1,393 @@
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|创建数据库：
+|    # create database database_name;
+|    查看数据库的定义：
+|        show create database database_name;
+|    查看所有数据库：
+|        show databases;
+|    删除数据库：
+|        drop database database_name;
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|数据库存储引擎：
+|        Mysql提供了多个不同的存储引擎，包括处理事务安全表的引擎和处理非事务安全表的引擎。
+|    在MySQL中，不需要在整个服务器使用同一种存储引擎，针对具体的要求，可以对每一个表使用不同的存储引擎。
+|    Mysql 5.7支持的存储引擎有：InnoDB、MyISAM、Memory、Merge、Archive、Federate、CSV、BLACKHOLE等。
+|    使用 show engines;查看系统所支持的引擎类型。
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|数据表的基本操作：
+|    创建表：create table table_name(
+|              id int(11) not null auto_increment,
+|              name varchar(255) not null default '',
+|              ...
+|            )engine = InnoDB default charset utf8;
+|    使用主键约束：id int(11) primary key、primary key (id,...)
+|    使用外键约束：
+|                constraint fk_emp_dept1 foreign key(id) reference tb_dept1(id)
+|                外键用来在两个表的数据之间建立链接，它可以是一列或者多列。一个表可以有一个或多个外键。外键对应的是参照完整性，
+|                一个表的外键可以为空值，若不为空值，则每一个外键值必须等于另一个表中主键的某个值。
+|                外键：首先它是表中的一个字段，它可以不是本表的主键，但对应另外一个表中的主键。外键的主要作用是保证数据引用的完
+|                整性，定义外键后，不允许删除在另一个表中具有关联关系的行。外键的作用是保持数据的一致性、完整性。
+|                主表（父表）：对于两个具有关联关系的表而言，相关字段中主键所在的那个表所在的那个表即是主表
+|                从表（子表）：对于两个具有关联关系的表而言，相关字段中外键所在的那个表所在的那个表即是从表
+|    非空：not null
+|    唯一性约束：字段名 数据类型 unique、constraint STH（约束名） unique(name);
+|                要求该列唯一，允许为空，但只能出现一个空值。唯一性约束可以保证一列或者几列不出现重复值。
+|    默认约束：default ''等等
+|    数据表属性自增：一个表只能有一个字段使用auto_increment 约束，且该字段必须为主键的一部分。（可以支持：tinyint、smallint、int、bigint等）
+|
+|    查看数据表结构：describe table_name; 或者简写 desc table_name;
+|    查看表详细结构语句：show create table table_name;
+|
+|    修改表名：alter table <旧表名> rename [TO] <新表明>;  --> TO为可选参数，使用与否不影响结果。
+|    修改字段的数据类型：alter table <table_name> modify <property_name> <data_type>;
+|    修改字段名：alter table <table_name> change <old_property_name> <new_property_name> <new_data_type>;
+|
+|    添加字段：alter table <table_name> add <new_property_name> <data_type> ... not null, default '', after <property_name>, first;
+|    删除字段：alter table <table_name> drop <property_name>;
+|    修改字段的排列位置：alter table <table_name> modify <property_1> <data_type> first|after <property_2>;
+|
+|    更改表的存储引擎：alter table <table_name> engine = <modified_engine_name>;
+|    删除表的外键约束：alter table <table_name> drop foreign key <foreign_key_name>;
+|
+|    删除数据表：
+|        删除没有被关联的表：drop table [if exits] table_1, ..., table_n;
+|        删除被其他表关联的主表：先删除关联的子表，再删除父表
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|数据类型和运算符：
+|    数据类型：
+|       数值类型：tinyint（一个字节）、smallint（2个字节）、mediumint（3个字节）、int（4个字节）、bigint（8个字节）
+|        浮点类型：float（4个字节）、double（8个字节）、定点小数类型：decimal（decimal(M, D), dec ==> M + 2个字节）
+|        日期/时间类型：year(YYYY 1901 ~ 2155 1个字节)、time(HH:MM:SS -838:59:59 ~ 839:59:59 3个字节)、date(YYYY-MM-DD 1000-01-01 ~ 9999-12-3 3个字节)、
+|                    datetime(YYYY-MM-DD HH:MM:SS 1000-01-01 00:00:00 ~ 9999-12-3 23:59:59 8个字节)、timestamp(YYYY-MM-DD HH:MM:SS 1970-01-01 00:00:01 UTC ~ 2038-01-19 03:14:07 UTC)
+|        字符串类型：char(1 <= M <= 255 M字节)、varchar(L+1字节 L <= M && L <= M <= 255)、tinytext(L < 2^8)、text(L < 2^16)、mediumtext(L < 2^24)、longtext(L < 2^32)
+|                    bit、binary()、varbinary、blob、tinyblob、mediumblob、longblob
+|                    enum(只能枚举字符串值 1或2字节，取决于枚举的数目 最大值65535)、set(1,2,3,4或8个字节，取决于成员的数量 最多64个成员) （文本字符串和二进制字符串）
+|    运算符：
+|        +、-、*、/ 、%、>、<、>=、<=、!=、~、^、|、&、<<、>>
+|        and、or、xor、not、in、between and、is null、greatest、least、like、regexp
+|        <=>安全等于运算符,可以用来判断null值 <>等价于!=
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|MySQL函数：
+|    abs(x) PI() sqrt(x)  mod(x,y)x被y除后的余数   ceil(x) ceiling(x) floor(x)
+|
+|    获取随机数的函数：rand() 返回的值字0到1之间的小数  rand(x)(x为种子数，用来产生重复序列)
+|    round(x), round(x,y)返回最接近x的数，其值保留小数点后y位，若y位负值，保留x值到小数点左边y位, truncate(x,y)返回  被舍去至小数点后y位的数字x，y=0则姐u哦不带有小数点
+|    或不带有小数部分。y<0则截去（归零）x小数点左起第y位开始后面所有低位的值
+|
+|    sign(x) -1 0 1
+|    pow(x,y), power(x,y), exp(x)e的乘方
+|    log(x)e位底, log10(x)
+|    radians(x)将参数x有角度转化为弧度, degrees(x)将参数x转化为角度
+|    sin(x), asin(x), cos(x), acos(x), tan(x), atan(x), cot(x) cot和tan互为倒数
+|
+|    字符串函数：
+|        char_length(str)包含的字符串个数, concat(s1, s2, ...)返回连接的字符串, concat_ws(x, s1, s2, ...)x位其他参数的分隔符
+|        替换字符串的函数：insert(s1, x, len, s2) 返回字符串s1，其子字符串起始于x位置和被字符串连接s2取代的len字符串
+|        大小写：lower(str), lcase(str), upper(str), ucase(str)
+|
+|        获取指定长度的字符串函数：left(s, n)返回字符串s开始的最左边的n个字符, right(s, n)
+|        填充字符串的函数：lpad(s1, len, s2)返回字符串s1，其左边字符串有s2填补到len字符长度，加入s1的长度大于len，则返回被缩短至len字符, rpad(s1, len, s2)
+|        删除空格的函数：ltrim(s), rtrim(s), trim(s), trim(s1 from s)删除字符串s中两端所有的子字符串s1
+|
+|        重复生成字符串的函数：repeat(s, n)
+|        空格函数：space(n)
+|        替换函数：replace(s, s1, s2)使用字符串s2代替字符串s中所有s1字符串s1
+|
+|        比较字符串大小：strcmp(s1, s2)
+|        获取子字符串：substring(s, n, len)  mid(s, n, len)获取指定位置处的子字符串
+|        匹配子串开始位置的函数：locate(str1, str), position(str1 IN str), instr(str, str1)
+|
+|        字符串逆序：reverse(s)
+|        返回指定位置的字符串：elt(N, s1, s2, ...) N = 1 则返回s1, N = 2 则返回s2
+|        返回指定字符串位置：field(s, s1, s2, ...)
+|        返回子串位置：find_in_set(s1, s2)
+|        选取字符串：make_set(x, s1, s2, ...)返回有x的二进制数指定的相应位的字符串组成的字符串。s1对应比特1，s2对应 01
+|
+|    日期和时间函数：
+|        获取当前日期和时间：curdate(), current_date() YYYY-MM-DD或者YYYYMMDD
+|        current_timestamp(), localtime(), now(), sysdate() YYYY-MM-DD HH:MM:SS    YYYYMMDDHHMMSS
+|        unix时间戳：unix_timestamp()
+|
+|        返回UTC日期：UTC_DATE() UTC 时间UTC_TIME()
+|        获取星期：dayname(d), dayofweek(d), weekday(d)
+|        获取星期数：week(d), weekofyear(d)
+|
+|        获取天数：dayofyear(d), dayofmonth(d)
+|        获取年份、季度、小时、分钟、秒钟：year(d), quarter(date), minute(time), second(time),
+|        获取日期的指定值：extract(type from date) type 位year、year_month、day_minute等等
+|        时间和秒钟转换：time_to_sec(time), sec_to_time(seconds)
+|
+|        计算日期和时间：date_add(), adddate(), date_sub(), subdate(), addtime(), subtime(), date_diff()
+|        ...
+|        if(expr, v1, v2), ifnull(v1, v2)
+|        case expr when v1 then r1 [when v2 then r2] [else rn] end
+|
+|        获取MySQL版本号：version()
+|        connection_id()返回MySQL服务器当前连接的次数
+|        show processlist; show full processlist;
+|
+|        获取用户名：user(), current_user(), system_user(), session_user()
+|        获取字符串的字符集和排序方式：charset(str)
+|        获取最后一个自动生成的ID：last_insert_id()
+|
+|        加/解密函数：
+|            password(str)加密是单向的，不可逆
+|            md5(str)
+|            encode(str, passwd_str)使用passw_str作为密码，加密str
+|            decode(crpt_str, passwd_str)
+|        其他函数：
+|            格式化：format(x, n) format(12333.21212, 4)  12333.2121
+|            进制：conv('a', 16, 2)
+|            IP地址与数字相互转换：inet_aton(expr)
+|
+|            加锁函数：get_lock(str, timeout)
+|            解锁函数：release_lock(str)
+|            is_free_lock(str), is_used_lock(str)
+|
+|            重复执行指定操作的函数：benchmark(count, expr)expr为函数
+|            改变字符集：charset(convert('string' using latin1));
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++查询数据：
++    select 字段... from 表/视图 where ... limit n, m order by 字段
++    in用来满足指定范围内的条件的记录 where id in (101, 201)
++    范围查询：between 2.0 and 10.2
++
++    like 一起使用的通配符有 % 和 _    where name like 'b%'：b开头的 %g%：包含g字符串的 b%y：b开头y结尾    _：一次只能匹配一个字符 '-----y'
++    查询空值：is null ===> where name is null;
++    and多条件查询  or多条件查询
++    查询结果不重复：select distinct
++
++    对结果进行排序：
++        select ... order by name;
++        多列排序：order by name, password
++        指定方向：desc, asc
++        分组查询：select id, count(*) as total from fruits group by id;
++                  group_concat()将每个分组中各个字段的值显示出来
++                  select s_id, group_concat(f_name) as Names from fruits group by s_id;
++                  having 过滤分组
++                  在group by子句中使用with rollup 在所有查询出来的分组记录之后增加一条数据，该记录查询出的所有记录的总和，即统计记录数量
++                  多字段分组：select * from user group by id, username, password;
++                  limit [offset] line_number; limit query result
++        使用聚合函数查询：
++                  count(): count(*)计算表中总的行数，不管某列有数值或者为空    count(字段名) 计算指定列下总的行数，计算时忽略空值的行
++                  sum() ：求和的函数，返回指定列值得总和
++                  avg()：通过计算返回的行数和每一行数据的和，求得指定列数据的平均值
++                  max(): 返回指定列中的最大值
++                  min()
++        连接查询：
++            连接是关系数据库的主要特点。连接查询是关系数据库中最主要的查询，主要包括内连接，外连接。通过连接运算符可以实现多个表查询。
++            内连接查询：inner join 连接的条件使用on而不是where
++                   使用比较运算符进行某些表间某（些）列数据的比较操作，并列出这些表中与连接条件相匹配的数据行，组合成新纪录，也就是说，在内连接查询中，只能满足条件的记录才能出现在结果关系中。
++            外连接查询：
++                   外连接查询将查询多个表中相关的行，内连接时。返回查询结果集合中的仅是符合查询条件和连接条件的行。
++                   left join：返回包括左表中的所有记录和右表中连接字段相等的记录。
++                       left outer join
++                   right join：返回包括右表中的所有记录和左表中连接字段相等的记录。
++                       right outer join
++                   子查询：any ==> select num1 from tb1 where num1 > any (select num2 from tb2);
++                           some ==> select num1 from tb1 where num1 > some (select num2 from tb2);
++                           all ==> select num1 from tb1 where num1 > all (select num2 from tb2); 满足所有条件
++                           exits ==> select * from user where exits (select * from  t1 where id = 100);
++                           not exits
++                           in(100, 200) : select * from user where in (select * from  t1 where id = 100);
++                   合并查询:
++                       select column, ... from tb1
++                       union [all]
++                       select column, ... from tb2
++                   别名：column as（可省略）， table as 。。。
++                   正则： select * from fruits where f_name regexp '^b';
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++插入、更新、删除数据：
++      插入：insert into table_name (column_list) values (value_list);  insert into person values(value_list), (value_list);
++      更新：update table_name set ... where condition
++      删除：delete from table_name [where condition]
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+|索引：
+|       索引用于快速找出某个列中一特定值得行。不使用索引，MySQL必须从第一条数据开始读完整个表，直到找出相关的行。表越大，查询花费
+|   的时间越多。如果表中查询的列有一个索引，MySQL能快速到达某个位置去搜寻数据文件，而不必查看所有数据。
+|       索引是对数据库表中一列或多列的值进行排序的一种结构，使用索引可提高数据库中特定数据的查询速度。
+|       索引是一个单独的，存储在磁盘上的数据库结构，它们包含着对数据库里所有记录的引用指针。使用索引用于快速找出某个或多个列有一特定值的行，所有MySQL列类型都可以被索引，对相关列使用索引是提高查询操作速度的最佳途径。
+|
+|       优点：1、通过创建唯一索引，可以保证数据库表中每一行数据的唯一性。
+|             2、可以大大加快数据查询的速度，这也是创建索引的最主要原因。
+|             3、在实现数据的参考完整性方面，可以加速表和表之间的连接。
+|             4、在使用分组和排序子句进行数据查询时，可以显著减少查询中分组和排序的时间。
+|       缺点：
+|             1、创建索引和维护索引要耗费时间，并且随着数据量的增加所耗费的时间也会增加。
+|             2、索引需要占磁盘空间，除了数据表占数据空间之外，每一个索引还要占一定的物理空间，如果有大量的索引，索引文件可能比数据文件更快到达最大文件尺寸。
+|             3、当对表中的数据进行增加、删除和修改的时候，索引也要动态的维护，这样就降低了数据的维护的速度。
+|
+|       索引的分类：  普通索引和唯一索引、单例索引和组合索引、全文索引、空间索引、
+|       索引的设计原则：
+|             1、索引并非越多越好，一个表中如有大量的索引，不仅占用磁盘空间，而且会影响insert、delete、update等语句的性能，因为当表中的数据更改的同时，索引也会进行调整和更新。
+|             2、避免对经常更新的表进行过多的索引，并且索引中的列尽可能的少。而对经常用于查询的字段应该建立索引，但要避免添加不必要的字段。
+|             3、数据量小的表最好不要建立索引，由于数据较少，查询花费的时间可能比遍历索引的时间还要短，索引可能不会产生优化效果。
+|             4、在条件表达式中经常用到的不同值较多的列上建立索引，在不同值较少的列不要建立索引。
+|             5、当唯一性是某种数据本身的特征时，指定唯一索引。使用唯一索引需能确保定义的列数据完整性，以提高查询速度。
+|             6、在频繁进行排序或分组（即进行group by或order by操作）的列上建立索引，如果待排序的列有多个，可以在这些列上建立组合索引。
+|       创建索引：
+|             创建表的时候创建索引：
+|                   create table table_name [col_name data_type] [unique|fulltext|spatial] [index|key] [index_name] (col_name [length]) [asc|desc];
+|                   使用explain语句查看索引是否正在使用;
+|                   唯一索引：unique index unique_index(id);unique_index为索引的名字
+|                   单列索引：index single_index(name(20))single_index为名字，20位长度
+|                   组合索引：index multi_index(id, name, age(100)) 长度为100
+|                   全文索引：fulltext index fulltext_index(info);适用于大型数据集。
+|                   空间索引：spatial index spatial_index(id);
+|             在已经存在的表上创建索引：
+|                   1、alter table _table_name add [unique | fulltext | spatial] [index | key] [index_name] (col_name[length], ...) [asc | desc]
+|                   2、create [unique | fulltext | spatial] index index_name on table_name (col_name[length], ...) [asc | desc]
+|
+|             删除索引：
+|                   1、使用alter table删除索引：alter table table_name drop index index_name;
+|                   2、使用drop index删除索引：drop index index_name on table_name;
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|存储过程和函数:
+|      存储过程：create procedure sp_name ([proc_parameter]) [characteristics ...] routine_body (routine 常规)  proc_parameter为指定存储过程的擦桉树列表：[IN | OUT | INOUT] parameter_name type
+|               create procedure AvgFruitPrice() begin select AVG(f_price) as avg_price from fruits end;
+|               create procedure CountProc(OUT param1 int) begin ... end;
+|      存储函数：
+|               create function func_name([func_parameter]) returns type [characteristics ...] routine_body [IN | OUT | INOUT] parameter_name type
+|               create function nameByZip() returns char(50) return (select s_name from supplies where s_call = '48075');
+|               使用变量：declare  var_name[, var_name]... data_type [default value]; ===> declare my_param int default 100;
+|                   为变量赋值：set var_name = expr [, var_name = expr] ...; ===> declare var1, var2, var3 int;
+|                                                                                set var1 = 10, var = 20; set var3 = var1 + var1;
+|      定义条件和处理程序：
+|               1、定义条件：
+|                   declare  condition_name condition for [condition_type] ===> [condition_type] sqlstate [value] sqlstate_value | mysql_error_code;
+|                   example：declare command_not_allowed condition for sqlstate '42000';(using sqlstate_value)     declare command_not_allowed condition for 1148;(using mysql_error_code)
+|               2、定义处理程序：
+|                   declare handler_type handler for condition_value[, ...] sp_statement;
+|                           handler_type: continue | exit | undo 错误处理方式
+|                           condition_value: sqlstate [value] sqlstate_value（包含5个字符的字符串错误值） 错误类型
+|                           condition_name（表示declare_condition定义的错误条件名称）  sqlwarning（匹配所有以01开头的sqlwarning错误代码）  not found（匹配所有以02开头的sqlwarning错误代码）
+|                           sqlexception（匹配所有没有被sqlwarning或not found捕获的sqlstate错误代码）  mysql_error_code（匹配数值类型错误代码）
+|      光标的使用：(查询语句可能返回多条数据，如果数据量非常大，需要在存储过程和存储函数中使用光标来逐条读取结果集中的记录。应用程序可以根据需要滚动或浏览其中的数据)
+|               注意：光标必须在声明处理程序之前被声明，并且变量和条件还必须在声明光标或处理程序之前被声明。
+|               1、声明：declare cursor_name cursor for select_statement
+|               2、打开：open cursor_name;
+|               3、使用光标：fetch cursor_name into var_name [, ...] ...{参数名称}
+|               4、关闭光标：close cursor_name;
+|      流程控制：
+|           1、if：if expr_condition then statement_list [elseif expr_cond then statement_list] [else statement_list] end if;
+|           2、case: case case_expr
+|                       when when_value then statement_list
+|                       [when when_value then statement_list]
+|                       [else statement_list]
+|                    end case
+|           3、loop: [loop_label:] loop
+|                       statement_list
+|                    end loop [loop_label]
+|           example: declare id int default 0;
+|                    add_loop: loop
+|                    set id = id + 1;
+|                       if id >= 10 then leave add_loop;
+|                       end if;
+|                    end loop add_loop;
+|           4、leave：退出循环
+|           5、iterate label(只可以出现在loop、repeat、while语句内)：将执行顺序转到语句开头处
+|               example：create procedure doiterate()
+|                        begin
+|                           declare p1 int default 0;
+|                        my_loop: loop
+|                           set p1 = p1 + 1；
+|                           if p1 < 10 then iterate my_loop;
+|                           else p1 > 20 then leave my_loop;
+|                           end if;
+|                           select 'p1 is between 10 and 20';
+|                        end loop my_loop
+|                        end
+|           6、while: declare i int default 0; while i < 10 do set i = i+1; end while;
+|           7、repeat：declare id int default 0; repeat set id = id + 1; until id >= 10; end repeat;
+|      调用存储过程和函数：
+|           存储过程：
+|               call sp_name([parameter[, ...]]);  example: create procedure countProc(IN sid int, OUT num INT) ... end ===> call countProc(101, @num); select @num;
+|           存储函数：
+|               create function countProc(sid int) ... end; select countProc(101);
+|       查看存储过程和函数：
+|           show {procedure | function} status [like 'pattern']
+|           show create {procedure | function} sp_name;
+|       从information_schema.Routines表中查看存储过程和函数：
+|           select * from information_schema.Routines where ROUTINE_NAME = 'sp_name';
+|       修改存储和函数：
+|           alter {procedure | function} sp_name [characteristics ...]{指定存储函数的特性 1、contains sql表示子程序包含SQL语句，但不包含读或写数据的语句
+|                                                                                        2、no sql不包含sql
+|                                                                                        3、reads sql data子程序中包含写数据的语句
+|                                                                                        4、modify sql data包含写数据语句
+|                                                                                        5、sql security{definer | invoker}指明谁有权限来执行
+|                                                                                        6、definer只有定义者自己才能执行
+|                                                                                        7、invoker调用者可以执行
+|                                                                                        8、'string' 表示注释信息
+|                                                                       }
+|            example: alter procedure CountProc modifies sql data sql security invoker;
+|       删除存储过程和函数：
+|            drop procedure | function [if exits] sp_name
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|视图：
+|       视图是从一个或者多个表中导出的，视图的行为与表非常相似，但视图是一个虚拟表。在视图中用户可以使用select语句查询数据，以及使用insert、update、delete修改记录。
+|       MySQL5.0开始可以使用视图，视图可以使用户操作方便，而且可以保障数据库系统额安全。 视图还可以在已经存在的视图的基础上定义。
+|       视图的作用：
+|           1、简单化：那些经常使用的查询可以被定义为视图，从而使得用户不必为以后的操作每次指定全部的条件。
+|           2、安全性：通过视图用户只能查询和修改他们所能见到的数据。数据库中其他的数据则既看不到也取不到。数据库授权命令可以使每个用户对数据的检索限制到特定的数据库对象上，但不能授权到数据库特定行和特定列上。
+|           3、逻辑数据独立性：视图可以帮助用户屏蔽真是表结构变化带来的影响。
+|
+|
+|
+|
+|
+|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

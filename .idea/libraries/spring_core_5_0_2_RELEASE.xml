@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="spring-core-5.0.2.RELEASE">
+    <CLASSES>
+      <root url="jar://E:/DeveloperLibary/jars/spring-framework-5.0.2.RELEASE/libs/spring-core-5.0.2.RELEASE.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://E:/DeveloperLibary/jars/spring-framework-5.0.2.RELEASE/libs/spring-core-5.0.2.RELEASE-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

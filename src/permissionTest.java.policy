@@ -1,0 +1,3 @@
+grant{
+    permission permission.MyPermission "sex,drugs,C++","avoid";
+};

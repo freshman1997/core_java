@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserRepository {
 
-    @SQL("select * from users u, stu s where u.id = #id and s.sid = #id")
+    @SQL("select * from user where id = #id")
     User selectById(@Param("id") int id);
     @SQL("select * from users where username = #username")
     User findByUsername(@Param("username") String username);

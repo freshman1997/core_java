@@ -1,1 +1,0 @@
-select * from slow_log

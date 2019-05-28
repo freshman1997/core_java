@@ -14,15 +14,6 @@ public class User {
     @Column(name="t_username")
     private String username;
     private String password;
-    private List<Stu> stuSet;
-
-    public List<Stu> getStuSet() {
-        return stuSet;
-    }
-
-    public void setStuSet(List<Stu> stuSet) {
-        this.stuSet = stuSet;
-    }
 
     public void setId(Integer id) {
         this.id = id;
@@ -34,7 +25,6 @@ public class User {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", stuSet=" + stuSet +
                 '}';
     }
 

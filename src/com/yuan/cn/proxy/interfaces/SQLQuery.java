@@ -402,15 +402,17 @@ public final class SQLQuery {
             StringBuilder target = new StringBuilder();
             for(int i = 0; i < sql.length(); i++){
                 if(sql.charAt(i) == '#'){
-//                    target.append(sql.charAt(i));
+                    target.append(sql.charAt(i));
                     int c = i;
                     while (sql.charAt(c) != ' ' && c != sql.length() -1){
-                        target.append(sql.charAt(c));
                         c = c + 1;
+                        target.append(sql.charAt(c));
+
                     }
                     break;
                 }
             }
+            System.out.println(target.toString());
             if(args[0].getClass().getSimpleName().equals("String"))
                 sql = sql.replace(target.toString(), "'"+args[0]+"'");
             else

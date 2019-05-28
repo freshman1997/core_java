@@ -8,7 +8,7 @@ import java.util.Map;
 
 public final class AnnotationUtil {
 
-    protected static String forSql(Annotation[] annotations){
+    static String forSql(Annotation[] annotations){
         String resql = null;
         for (Annotation annotation : annotations) {
             if(annotation.annotationType().equals(SQL.class))
@@ -21,7 +21,7 @@ public final class AnnotationUtil {
         }
         return resql;
     }
-    protected static String forParam(Annotation[] annotations, String sql, Object[] args, int i){
+    static String forParam(Annotation[] annotations, String sql, Object[] args, int i){
 
         for (Annotation annotation : annotations) {
             if(annotation.annotationType().equals(Param.class)){
@@ -36,7 +36,7 @@ public final class AnnotationUtil {
         }
         return sql;
     }
-    protected static void forMap(Field field, Method declaredMethod, Map<String, String> map){
+    static void forMap(Field field, Method declaredMethod, Map<String, String> map){
         if(field != null){
             Annotation[] annotations = field.getAnnotations();
             for (Annotation annotation : annotations) {

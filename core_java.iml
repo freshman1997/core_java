@@ -18,6 +18,7 @@
     <orderEntry type="library" name="hamcrest-core-2.1" level="project" />
     <orderEntry type="library" name="hamcrest-2.1" level="project" />
     <orderEntry type="library" name="mysql-connector-java-5.1.45" level="project" />
+    <orderEntry type="library" name="sqlite-jdbc-3.23.1" level="project" />
   </component>
   <component name="POM File Configuration" pomFile="" />
 </module>

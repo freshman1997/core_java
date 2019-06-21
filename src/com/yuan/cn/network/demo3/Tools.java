@@ -39,7 +39,7 @@ public class Tools {
 //        });
 //        doRenameBatch("G:\\教程\\C_C++\\c++\\1-C++高级开发内存管理专题讲解视频教程附课件代码 60课");
 
-        System.out.println("行数："+lineNumberCounter("D:\\Golang\\mygolang\\src\\demo1\\open-bilibili"));
+        System.out.println("行数："+lineNumberCounter("D:\\software\\jetbrain\\resources\\idea\\core_java\\src"));
         System.out.println(fileList.size());
     }
 
@@ -77,10 +77,6 @@ public class Tools {
                 lineNumberReader.skip(Long.MAX_VALUE);
                 sum += lineNumberReader.getLineNumber();
                 System.out.println("当前的文件为："+file+"\t\t\t\t 行数为："+lineNumberReader.getLineNumber());
-                lineNumberReader = null;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return -1;
             } catch (IOException e) {
                 e.printStackTrace();
                 return -1;
@@ -94,18 +90,18 @@ public class Tools {
      * 通过递归一个路径获取所有文件的路径，不限深度
      * @param path
      */
-    static void getFiles(final String path)
+    private static void getFiles(final String path)
     {
         File file = new File(path);
-        String[] list = file.list();
-        for (final String s : list) {
-            File subFile = new File(file.getPath()+"\\"+s);
-            if(subFile.isDirectory())
-            {
-                getFiles(subFile.getPath());
-            }else if(subFile.isFile() && subFile.getName().endsWith(".go"))
-            {
-                fileList.add(subFile.getPath());
+        if(file.exists()) {
+            String[] list = file.list();
+            for (final String s : list) {
+                File subFile = new File(file.getPath() + "\\" + s);
+                if (subFile.isDirectory()) {
+                    getFiles(subFile.getPath());
+                } else if (subFile.isFile() && subFile.getName().endsWith(".java")) {
+                    fileList.add(subFile.getPath());
+                }
             }
         }
     }

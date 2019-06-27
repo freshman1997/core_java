@@ -9,8 +9,8 @@ import java.util.Properties;
 
 public final class JDBCConnectionUtil {
     private static String url;
-    private static String username;
-    private static String password;
+    private static String username = null;
+    private static String password = null;
 
     private static Connection connection = null;
 
@@ -34,9 +34,12 @@ public final class JDBCConnectionUtil {
     public static Connection getConnection() {
         if (connection == null) {
             try {
-                connection = DriverManager.getConnection(url, username, password);
+
+                connection = (username == null && password == null) ?  DriverManager.getConnection(url) :
+                        DriverManager.getConnection(url, username, password);
+
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
         return connection;

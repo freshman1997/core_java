@@ -11,7 +11,7 @@ import java.util.List;
 public class User {
     @Column(name="id")
     private Integer id;
-    @Column(name="t_username")
+    @Column(name="name")
     private String username;
     private String password;
 

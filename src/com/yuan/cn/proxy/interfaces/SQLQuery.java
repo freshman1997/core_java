@@ -219,8 +219,13 @@ public final class SQLQuery {
         }
 
         if (t == null) {
-            throw new RuntimeException("创建实体类对象失败！");
+            try {
+                throw new Exception("创建实体类对象失败！");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        assert  t != null;
         FillMap(t);
         if (resultSet.next()) {
             forProperties(list, type, resultSet, t);
@@ -242,8 +247,13 @@ public final class SQLQuery {
             resultSet = statement.executeQuery(sql);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                throw new Exception(e);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
+
         assert resultSet != null;
         while (resultSet.next()) {
             try {

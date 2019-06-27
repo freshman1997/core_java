@@ -1,8 +1,5 @@
 package com.yuan.cn.jdbc.sqlite;
 
-
-
-
 import java.sql.*;
 
 public class SQLiteHelper {
@@ -21,6 +18,7 @@ public class SQLiteHelper {
             statement = connection.createStatement();
 
             statement.executeUpdate("create table if not exists user(id, name, password);");
+
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -40,14 +38,19 @@ public class SQLiteHelper {
 
     public static void main(String[] args) throws SQLException {
         SQLiteHelper helper = new SQLiteHelper();
-        helper.statement.executeUpdate("insert into user values (1, '你好', 'tomcat');");
-        helper.statement.executeUpdate("insert into user values (2, 'smith', 'share');");
-        helper.statement.executeUpdate("insert into user values (3, 'admin', 'admin');");
-        helper.connection.commit();
+//        for (int i = 0; i < 1000000; i++){
+//            helper.statement.executeUpdate("insert into user values (1, '你好', 'tomcat');");
+//            helper.statement.executeUpdate("insert into user values (2, 'smith', 'share');");
+//            helper.statement.executeUpdate("insert into user values (3, 'admin', 'admin');");
+//        }
+//        helper.statement.executeBatch();
+//
+//        helper.connection.commit();
 
-        helper.resultSet = helper.statement.executeQuery("select * from user");
+        helper.resultSet = helper.statement.executeQuery("select count(*) from user");
         while (helper.resultSet.next()){
-            System.out.println(helper.resultSet.getString("name"));
+            System.out.println(helper.resultSet.getInt(1));
         }
+
     }
 }

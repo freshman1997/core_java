@@ -19,6 +19,6 @@ public interface UserRepository {
     int update(User user);
     @SQL("delete from users where id = #id")
     int deleteById(@Param("id") int id);
-    @SQL("select * from users u, stu s where u.id > 0 and s.sid > 0")
+    @SQL("select * from users;")
     List<User> findAll();
 }

@@ -3,6 +3,7 @@ package com.yuan.cn.network.java.network.http;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class HttpTask implements Runnable{
@@ -50,7 +51,9 @@ public class HttpTask implements Runnable{
             }
 
 
-            System.out.println(result);
+            assert result != null;
+
+            System.out.println(new String(result.getBytes(), StandardCharsets.UTF_8));
             try {
 
                 writer.println(result);
@@ -70,6 +73,5 @@ public class HttpTask implements Runnable{
                 e.printStackTrace();
             }
         }
-
     }
 }

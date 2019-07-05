@@ -104,6 +104,7 @@ public final class HttpUtils {
         builder.append("\n");
     }
 
+    // 请求行  请求类型 路径 http版本
     private static void builderResponseLine(Response response, StringBuilder builder) {
         builder.append(response.getVersion()).append(" ")
                 .append(response.getCode()).append(" ")

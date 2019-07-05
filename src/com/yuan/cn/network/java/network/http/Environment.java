@@ -1,7 +1,10 @@
 package com.yuan.cn.network.java.network.http;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.net.JarURLConnection;
@@ -14,6 +17,10 @@ import java.util.jar.JarFile;
 
 public class Environment {
 
+
+    public Environment() {
+        param = null;
+    }
 
     private List<Class<?>> getAnnotation() throws IOException, ClassNotFoundException {
         String name =  this.getClass().getPackage().getName();
@@ -50,6 +57,7 @@ public class Environment {
         try {
             List<Class<?>> classList = getAnnotation();
 
+            assert classList != null;
             classList.forEach(item -> {
                 load(item, map);
             });
@@ -206,9 +214,17 @@ public class Environment {
 
 
                         if(! uri.equals("")){
-                            return getString(o, request, declaredMethod, production, type, uri);
+                            String s1 = loadPathVariable(o, request, uri);
+                            if (s1 == null)
+                                return getString(o, request, declaredMethod, production, type, uri);
+                            else
+                                return getString(o, request, declaredMethod, production, type, s1);
                         }else if(! value.equals("")) {
-                            return  getString(o, request, declaredMethod, production, type, uri);
+                            String s1 = loadPathVariable(o, request, value);
+                            if (s1 == null)
+                                return getString(o, request, declaredMethod, production, type, uri);
+                            else
+                                return getString(o, request, declaredMethod, production, type, s1);
                         }
                     }
                 }
@@ -216,8 +232,104 @@ public class Environment {
         }
         return null;
     }
+    private String param;
+    private String loadPathVariable(Object o, Request request, String uri){
+
+        String s = null;
+        for (Method declaredMethod : o.getClass().getDeclaredMethods()) {
+            for (Parameter parameter : declaredMethod.getParameters()) {
+                if(parameter.isAnnotationPresent(RequestParam.class) || parameter.isAnnotationPresent(PathVariable.class)){
+
+                    for (Annotation annotation : parameter.getAnnotations()) {
+//                        if(annotation.annotationType().equals(RequestParam.class)){
+//                            RequestParam requestParam = (RequestParam) annotation;
+//                            boolean require = requestParam.require();
+//                            String value = requestParam.value();
+//
+//                        }
+
+                        if(annotation.annotationType().equals(PathVariable.class)){
+                            PathVariable pathVariable = (PathVariable) annotation;
+
+                            String name = pathVariable.name();
+                            String value = pathVariable.value();
+                            String uri1 = request.getUri();
+                            String result = null;
+
+                            if(name.equals("") && value.equals("")){
+                                result = "";
+                            }
+                            if(! name.equals("") && ! value.equals("")){
+                                result = name;
+                            }
+                            if(! name.equals("") && value.equals("")){
+                                result = name;
+                            }
+                            if(name.equals("") && ! value.equals("")){
+                                result = value;
+                            }
+
+                            if(! result.equals("")){
+
+                                // /test/{id}
+
+                                s = uri.substring(uri.indexOf("{") +1, uri.indexOf("}"));
+
+                                if(! result.equals(s)){
+                                    throw new IllegalArgumentException(s + " does not equals to " + parameter.getName());
+                                }
+
+                                int i = next(uri, uri.indexOf("{") - 1);
+                                s = '{' + s + "}";
+                                if(i == -1)
+                                {
+                                    s = uri.replace(s, uri1.substring(uri.indexOf("{")));
+                                    param = uri1.substring(uri.indexOf("{"));
+                                }
+                                else {
+                                    String substring = uri1.substring(uri.indexOf("{"), i);
+                                    s = uri.replace(s, substring);
+                                    param = substring;
+                                }
+                                System.err.println(s);
+                                return s;
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return s;
+    }
+    @Test
+    public void test(){
+        String s = "/test/{id}/ss";
+        String s1 = "/test/1243/ss";
+        System.out.println(s.substring(s.indexOf("{"), s.indexOf("}")+1));
+        int i = s.indexOf("{");
+        int res = 0;
+        while (i != s.length() -1){
+            if((s1.charAt(i) == '/'))
+                res = i;
+            i++;
+            if(i == s.length() -1 && res == 0)
+                System.out.println("----");
+        }
+
+        System.out.println(s.replace("{id}", s1.substring(s.indexOf("{"), next(s1, s.indexOf("{") - 1))));
+    }
+    private int next(String s, int index){
+        int res = -1;
+        for (int i = index + 1; i < s.length(); i++){
+            if(s.charAt(i) == '/')
+                res = i;
+        }
+        return res;
+    }
 
     private String getString(Object o, Request request, Method declaredMethod, String production, MethodType type, String uri) {
+        System.err.println();
         if(request.getUri().equals(uri)){
             if(request.getMethod().equals(type.getMethod())){
                 System.out.println(request.getMethod().equals(type.getMethod()));
@@ -225,9 +337,24 @@ public class Environment {
                 for (Parameter parameter : parameters) {
                     if(parameter.getType().getSimpleName().equals(request.getClass().getSimpleName())){
                         try {
-                            Object invoke = declaredMethod.invoke(o, request);
+
+                            Object invoke;
+                            if(param == null)
+                                invoke = declaredMethod.invoke(o, request, null);
+                            else
+                            {
+                                try {
+                                    param = URLDecoder.decode(param, "UTF-8");
+                                    System.out.println(param);
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                invoke = declaredMethod.invoke(o, request, param);
+                            }
+
                             String res = (String) invoke;
                             String s = new String(res.getBytes(), StandardCharsets.UTF_8);
+
                             if(production.equals(""))
                                 return  HttpUtils.buildResponse(request, s, "text/html;charset=utf-8", 200, "ok");
                             else
@@ -245,11 +372,6 @@ public class Environment {
         return null;
     }
 
-
-    public static void main(String[] args) {
-        List<Class<?>> list = getClasses("com.yuan.cn.network.java.network.http");
-        //list.forEach(System.out::println);
-    }
 
 
     /**

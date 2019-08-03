@@ -219,7 +219,7 @@ public class Environment {
                                 return getString(o, request, declaredMethod, production, type, uri);
                             else
                                 return getString(o, request, declaredMethod, production, type, s1);
-                        }else if(! value.equals("")) {
+                        }else if(! value.equals("") ) {
                             String s1 = loadPathVariable(o, request, value);
                             if (s1 == null)
                                 return getString(o, request, declaredMethod, production, type, uri);

@@ -15,7 +15,7 @@ public class MP3Player extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // 直接复制下来没效果可能是因为连接地址失效了
-        sound = new Sound(new File("D:\\python\\qq_music\\dist\\友谊万岁__杨千嬅香港儿童合唱团.mp3"), false);
+        sound = new Sound(new File("D:\\Kugou\\sources\\毛阿敏 - 同一首歌 (2013版).mp3"), false);
 
         sound.play();
         sound.seek();
@@ -43,9 +43,8 @@ public class MP3Player extends Application {
  *
  * 使用JavaFX播放MP3文件,需要导入javafx.scene.media包
  */
-class Sound extends Object {
+class Sound {
 
-    private Media media;// 相当于媒体播放器
     private MediaPlayer mediaPlayer;// 相当于媒体控制器
 
     /**
@@ -125,7 +124,8 @@ class Sound extends Object {
      *            媒体文件目录，本地文件也要用URL(String)路径
      */
     public Sound(String URL, boolean isAutoPlay) {
-        this.media = new Media(URL);
+        // 相当于媒体播放器
+        Media media = new Media(URL);
         this.mediaPlayer = new MediaPlayer(media);
 
         mediaPlayer.setAutoPlay(isAutoPlay);

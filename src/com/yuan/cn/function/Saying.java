@@ -3,11 +3,10 @@ package com.yuan.cn.function;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Saying<T>{
     private T name;
-    List<T> list = new ArrayList<>();
+    private List<T> list = new ArrayList<>();
     public void say(String name) {
 
     }

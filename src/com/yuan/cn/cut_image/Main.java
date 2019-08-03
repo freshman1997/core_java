@@ -28,9 +28,11 @@ public class Main extends Application {
     private Stage stage;
     private Stage stage1;
     private boolean is_done =false;
+    private Button button;
     public static void main(String[] args) {
         launch(args);
     }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         stage = primaryStage;
@@ -40,7 +42,7 @@ public class Main extends Application {
         iv.setFitHeight(400);
 
         iv.setPreserveRatio(true);
-        Button button = new Button("开始截图");
+        button = new Button("开始截图");
         Button button1 = new Button("保存到硬盘");
         Button button2 = new Button("copy到剪切板");
 
@@ -61,10 +63,11 @@ public class Main extends Application {
         primaryStage.setTitle("jack_yuan_截图");
         primaryStage.setScene(scene);
         primaryStage.setFullScreen(false);
-        primaryStage.setWidth(800);
-        primaryStage.setHeight(800);
+        primaryStage.setWidth(400);
+        primaryStage.setHeight(150);
         primaryStage.show();
         button.setOnAction(event -> show());
+
         button1.setOnAction(event -> {
             if(!is_done){
                 Alert alert = new Alert(Alert.AlertType.ERROR,"你还没有开始截图哦！",new ButtonType("取消", ButtonBar.ButtonData.NO),
@@ -108,8 +111,10 @@ public class Main extends Application {
             if(event.getCode() == KeyCode.ESCAPE){
                 stage1.close();
                 stage.setIconified(false);
+
             }
         });
+
     }
     double scenex_start;
     double sceney_start;
@@ -121,7 +126,7 @@ public class Main extends Application {
             anchorPane.getChildren().clear();
             box = new HBox();
             box.setBackground(null);
-            box.setBorder(new Border(new BorderStroke(Paint.valueOf("#CD3700"), BorderStrokeStyle.SOLID, null, new BorderWidths((2)))));
+            box.setBorder(new Border(new BorderStroke(Paint.valueOf("#00ff00"), BorderStrokeStyle.SOLID, null, new BorderWidths((2)))));
 
             anchorPane.getChildren().add(box);
             scenex_start = event.getSceneX();
@@ -182,9 +187,16 @@ public class Main extends Application {
         bufferedImage = robot.createScreenCapture(rectangle);
         wi = SwingFXUtils.toFXImage(bufferedImage, null);
         iv.setImage(wi);
+        iv.setFitHeight(h);
+        iv.setFitWidth(w);
+
         stage.setIconified(false);
         addToClipboard();
         is_done = true;
+        stage.setWidth(w + 70);
+        stage.setHeight(h + 150);
+        if (bufferedImage != null)
+            button.setText("继续截图");
     }
     private void addToClipboard(){
         Clipboard cb = Clipboard.getSystemClipboard();

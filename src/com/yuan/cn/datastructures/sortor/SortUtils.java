@@ -1,10 +1,12 @@
 package com.yuan.cn.datastructures.sortor;
 
 import com.sun.istack.internal.NotNull;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 public class SortUtils {
 
@@ -121,6 +123,74 @@ public class SortUtils {
                 arr[i] = (T) objects1[i];
         }
     }
+
+    public <E extends Comparable<E>>  Stack<E> getSortedStack(Stack<E> unSortedStack){
+        Stack<E>  helperStack = new Stack<>();
+
+        while (! unSortedStack.isEmpty()) {
+
+            E current = unSortedStack.pop();
+
+            while (! helperStack.isEmpty() && helperStack.peek().compareTo(current) < 0){
+                unSortedStack.push(helperStack.pop());
+            }
+            helperStack.push(current);
+        }
+
+        while (! helperStack.isEmpty()){
+            unSortedStack.push(helperStack.pop());
+        }
+
+        return unSortedStack;
+    }
+    @Test
+    public void test(){
+        Stack<Integer> integerStack = new Stack<>();
+        integerStack.push(1);
+        integerStack.push(3);
+        integerStack.push(2);
+        integerStack.push(4);
+        integerStack.push(5);
+        integerStack.push(0);
+        integerStack.push(9);
+        getSortedStack(integerStack).forEach(System.out::println);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public static void main(String[] args) {
         Integer[] arr = {1, 3, 2, 5, 6, 10, 8, 9, 4, 7};
         quickSort(arr);

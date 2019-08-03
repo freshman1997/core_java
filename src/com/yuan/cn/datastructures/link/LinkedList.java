@@ -1,6 +1,7 @@
 package com.yuan.cn.datastructures.link;
 
 public class LinkedList<E> {
+
     private Node dummyHead;
     private int size;
     public LinkedList() {

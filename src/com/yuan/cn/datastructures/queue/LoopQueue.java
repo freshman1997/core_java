@@ -11,6 +11,7 @@ public class LoopQueue<E> implements Queue<E>{
         front = 0;
         tail = 0;
     }
+
     public LoopQueue(){
         data = (E[]) new Object[10 + 1];
         front = 0;
@@ -108,6 +109,7 @@ public class LoopQueue<E> implements Queue<E>{
         long endTime = System.nanoTime();
         return (endTime - startTime) / 1000000000.0;
     }
+
     public static void main(String[] args) {
         int opCount = 100000;
         Queue<Integer> arrayQueue = new ArrayQueue<>();

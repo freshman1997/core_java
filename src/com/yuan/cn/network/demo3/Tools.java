@@ -39,8 +39,9 @@ public class Tools {
 //        });
 //        doRenameBatch("G:\\教程\\C_C++\\c++\\1-C++高级开发内存管理专题讲解视频教程附课件代码 60课");
 
-        System.out.println("行数："+lineNumberCounter("D:\\software\\jetbrain\\resources\\idea\\core_java\\src"));
-        System.out.println(fileList.size());
+//        System.out.println("行数："+lineNumberCounter("D:\\software\\jetbrain\\resources\\idea\\core_java\\src"));
+//        System.out.println(fileList.size());
+        System.out.println(~ (-1));
     }
 
     // 文件重命名操作

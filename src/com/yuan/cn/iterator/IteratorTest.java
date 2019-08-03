@@ -3,7 +3,7 @@ package com.yuan.cn.iterator;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class IteratorTest<T> implements Iterable<T>,Cloneable{
+public class IteratorTest<T> implements Iterable<T>, Cloneable{
     private Object[] obj = new Object[1];
 
     private int size;

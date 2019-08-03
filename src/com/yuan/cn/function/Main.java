@@ -19,12 +19,12 @@ public class Main {
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
-        Saying saying = new Saying();
+        Saying<String> saying = new Saying<>();
         saying.setName("hello ");
         saying.setName("world!");
         saying.showResult(System.out::print);
     }
-    public static void captureScreen(String fileName, String folder) throws Exception {
+    private static void captureScreen(String fileName, String folder) throws Exception {
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Rectangle screenRectangle = new Rectangle(screenSize);
@@ -58,7 +58,7 @@ public class Main {
         String data=sdf.format(dt);
         String rd=sdf1.format(dt);
         try {
-            captureScreen("F:\\image\\"+data,rd+".png");
+            captureScreen("D:\\image\\"+data,rd+".png");
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

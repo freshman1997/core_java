@@ -205,6 +205,7 @@ class DynamicEngine {
      * @throws Exception
      */
     public Object javaCodeToObject(String fullClassName, String javaCode) throws Exception {
+
         long start = System.currentTimeMillis(); //记录开始编译时间
         Object instance = null;
         //获取系统编译器

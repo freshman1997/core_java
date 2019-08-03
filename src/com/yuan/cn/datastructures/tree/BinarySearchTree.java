@@ -16,7 +16,7 @@ public class BinarySearchTree<E extends Comparable> {
         E e;
         Node left, right;
 
-        public Node(E e) {
+        Node(E e) {
             this.e = e;
             left = right = null;
         }
@@ -268,10 +268,10 @@ public class BinarySearchTree<E extends Comparable> {
             }
         }
     }
+
     public void levelOrder(){
         LinkedList<Node> queue = new LinkedList<>();
         queue.add(root);
-
 
         while(!queue.isEmpty()){
             Node current = queue.remove();
@@ -302,6 +302,7 @@ public class BinarySearchTree<E extends Comparable> {
 
         return e;
     }
+
     // 删除掉以node为根的二分搜索树中的最小节点
     // 返回删除节点后新的二分搜索树的根
     private Node removeMin(Node node) {

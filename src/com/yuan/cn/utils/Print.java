@@ -5,38 +5,36 @@ public class Print {
         print(10, 10);
         print1(10);
     }
-    static void print1(int n){
+    private static void print1(int n){
         int i = 0;
         int c = 2*n;
         while (i <= n){
-            p(c);
-            for(int j = 0; j < i - 1; j++){
-                System.out.print("* ");
-            }
-            c = c -2;
-            for(int j = 0; j < i; j++){
-               System.out.print("* ");
-            }
-            System.out.println();
+            c = getC(i, c, c -2);
             i++;
             if(i == n){
                 c = 0;
                 while (i > 0 ){
-                    p(c);
-                    for(int j = 0; j < i - 1; j++){
-                        System.out.print("* ");
-                    }
-                    c = c + 2;
-                    for(int j = 0; j < i; j++){
-                        System.out.print("* ");
-                    }
-                    System.out.println();
+                    c = getC(i, c, c + 2);
                     i--;
                 }
                 return;
             }
         }
     }
+
+    private static int getC(int i, int c, int i2) {
+        p(c);
+        for(int j = 0; j < i - 1; j++){
+            System.out.print("* ");
+        }
+        c = i2;
+        for(int j = 0; j < i; j++){
+            System.out.print("* ");
+        }
+        System.out.println();
+        return c;
+    }
+
     public static void print(int length,int height){
         int l = length;
         int len = 0;

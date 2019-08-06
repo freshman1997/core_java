@@ -44,6 +44,7 @@ public class CountWordTest {
             System.out.println(len);
             buffer.clear();
             writer.write(buffer);
+
             buffer.rewind();
         }
         long end = System.currentTimeMillis();

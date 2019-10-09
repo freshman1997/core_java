@@ -3,6 +3,7 @@ package com.yuan.cn.network.java.network.socket.server;
 import com.yuan.cn.network.java.network.socket.*;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
@@ -10,10 +11,10 @@ import java.util.concurrent.TimeUnit;
 public class LongConnectionServer {
 
     private final int port;
-    private static boolean isTimeout = false;
-    private static long timeout = 1000 * 60L;
 
-    private static long lastActionTime = System.currentTimeMillis();
+    private static long timeout = 1000 * 8L;
+
+
     public LongConnectionServer(int port) {
         this.port = port;
     }
@@ -35,14 +36,15 @@ public class LongConnectionServer {
             ServerSocket serverSocket = null;
             try {
                 serverSocket = new ServerSocket(port);
-                System.out.println("server start @ " + serverSocket.getInetAddress().getHostAddress());
-
+                System.out.println("server start @ " + serverSocket.getInetAddress().getHostAddress() + ":" + port);
+                Socket client;
                 while (true)
                 {
-                    Socket client = null;
-
                     client = serverSocket.accept();
-                    HandleReadThread readThread = new HandleReadThread(client.getInputStream(), client.getOutputStream());
+                    System.out.println("新客户端接入：ip = " + ((InetSocketAddress)client.getRemoteSocketAddress()).getAddress().getHostAddress() + " port = " + ((InetSocketAddress)client.getRemoteSocketAddress()).getPort());
+                    System.out.println();
+
+                    HandleReadThread readThread = new HandleReadThread(client);
                     readThread.start();
                 }
 
@@ -54,23 +56,33 @@ public class LongConnectionServer {
 
 
     private static class HandleReadThread extends Thread{
-        private InputStream inputStream;
-        private OutputStream outputStream;
+
+        private boolean isTimeout = false;
+        private long lastActionTime = System.currentTimeMillis();
         private MessageReader reader = new ServerMessageReader();
-
-        private HandleReadThread(InputStream inputStream, OutputStream outputStream) {
-            this.inputStream = inputStream;
-            this.outputStream = outputStream;
+        private Socket client;
+        private MessageSender sender = new ServerMessageSender();
+        private int counter = 0;
+        private HandleReadThread(Socket client){
+            this.client = client;
         }
-
         @Override
         public void run() {
+            InputStream inputStream;
             while (!isTimeout){
 
                 try {
-                    if (System.currentTimeMillis() - lastActionTime > timeout)
+
+                    if ((System.currentTimeMillis() - lastActionTime) > timeout){
                         isTimeout = true;
-                    if (inputStream.available() > 0)
+                        System.out.println("超时!\n");
+                        client.close();
+                        break;
+                    }
+
+                    inputStream = client.getInputStream();
+
+                    if (client.getInputStream().available() > 0)
                     {
                         Object o = reader.readHeartBeat(inputStream);
                         if (o != null)
@@ -78,47 +90,34 @@ public class LongConnectionServer {
                             System.out.println(o);
                         }
 
-                        //System.out.println("Message receive : " + reader.readTextMessage(inputStream));
-                        lastActionTime = System.currentTimeMillis();
-
-                        HandleWriteThread writeThread = new HandleWriteThread(outputStream);
-                        writeThread.start();
+                        System.out.println("Message receive : " + reader.readTextMessage(inputStream));
+                        handleWrite();
                     }
+
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                     break;
                 }
             }
         }
-    }
-    private static class HandleWriteThread extends Thread{
-        private MessageSender sender = new ServerMessageSender();
-        private int counter = 0;
-        private OutputStream outputStream;
 
-        private HandleWriteThread(OutputStream outputStream) {
-            this.outputStream = outputStream;
-        }
+        private void handleWrite() {
+            try {
+                OutputStream outputStream = client.getOutputStream();
+                sender.sendHeartBeat(new HeartBeat(counter++), outputStream);
 
-        @Override
-        public void run() {
-            while (!isTimeout){
-                if (System.currentTimeMillis() - lastActionTime > timeout) {
-                    isTimeout = true;
-                    break;
-                }
-                try {
-                    sender.sendHeartBeat(new HeartBeat(counter++), outputStream);
+                sender.sendMessage(("你好世界，我是服务端，一个沙雕是也！\nend\n").getBytes(), outputStream);
+                TimeUnit.SECONDS.sleep(2);
+                lastActionTime = System.currentTimeMillis();
 
-                    //sender.sendMessage("你好世界，我是原智强，一个沙雕是也！\nend\n".getBytes(), outputStream);
-                    TimeUnit.SECONDS.sleep(2);
-                    lastActionTime = System.currentTimeMillis();
+                if (counter > 10)
+                    TimeUnit.SECONDS.sleep(10);
 
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                    break;
-                }
+
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
+
 }

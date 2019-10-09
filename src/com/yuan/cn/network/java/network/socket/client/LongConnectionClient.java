@@ -2,9 +2,7 @@ package com.yuan.cn.network.java.network.socket.client;
 
 import com.yuan.cn.network.java.network.socket.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +11,7 @@ public class LongConnectionClient {
     public static int size;
     private final int port;
     private final String host;
-    private static final long TIMEOUT = 1000 * 60L;
+    private static final long TIMEOUT = 1000 * 8L;
     private static boolean isTimeout = false;
     private static long lastActionTime = System.currentTimeMillis();
     private static boolean stop = false;
@@ -30,58 +28,38 @@ public class LongConnectionClient {
         WriteThread writeThread = new WriteThread();
         writeThread.start();
     }
-    private static class ReadThread extends Thread
-    {
-        private MessageReader reader = new ServerMessageReader();
 
-        @Override
-        public void run() {
-            while (!isTimeout){
-                if (System.currentTimeMillis() - lastActionTime > TIMEOUT)
-                    isTimeout = true;
-                try {
-                    if (socket.getInputStream().available() > 0){
-                        Object o = reader.readHeartBeat(socket.getInputStream());
-                        if (o != null)
-                        {
-                            System.out.println(o);
-                        }else {
-                            System.out.println("收到的对象为空");
-                        }
-                        //System.out.println("Message receive : " + reader.readTextMessage(inputStream));
-//                        byte[] buff = new byte[1024];
-//                        while (inputStream.read(buff) != -1);
-                        lastActionTime = System.currentTimeMillis();
-                    }
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                    break;
-                }
-            }
-        }
-    }
     private static class WriteThread extends Thread{
 
         private MessageSender sender = new ServerMessageSender();
+        private MessageReader reader = new ServerMessageReader();
         private int counter = 0;
 
         @Override
         public void run() {
+            OutputStream outputStream = null;
             while (!isTimeout){
-                if (System.currentTimeMillis() - lastActionTime > TIMEOUT)
+                if ((System.currentTimeMillis() - lastActionTime) > TIMEOUT){
                     isTimeout = true;
-                try {
+                    System.out.println("超时!");
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
 
-                    sender.sendHeartBeat(new HeartBeat(counter++), socket.getOutputStream());
-                    //byte[] bytes = "\n你好服务器，我是客户端，一个沙雕是也！\nend\n\n".getBytes();
-                    //sender.sendMessage(bytes, socket.getOutputStream());
+                try {
+                    outputStream = socket.getOutputStream();
+                    sender.sendHeartBeat(new HeartBeat(counter++), outputStream);
+                    byte[] bytes = "\n你好服务器，我是客户端，也是一个沙雕！\nend\n\n".getBytes();
+                    sender.sendMessage(bytes, outputStream);
 
                     TimeUnit.SECONDS.sleep(2);
-                    lastActionTime = System.currentTimeMillis();
-                    //skipBytesFromStream(socket.getInputStream(), size);
+                    //lastActionTime = System.currentTimeMillis();
 
-                    ReadThread readThread = new ReadThread();
-                    readThread.start();
+                    handleRead();
 
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
@@ -92,6 +70,27 @@ public class LongConnectionClient {
                     }
                     break;
                 }
+            }
+        }
+
+        private void handleRead() {
+            InputStream inputStream;
+            try {
+                inputStream = socket.getInputStream();
+                if (inputStream.available() > 0){
+
+                    Object o = reader.readHeartBeat(inputStream);
+                    if (o != null)
+                    {
+                        System.out.println(o);
+                    }else {
+                        System.out.println("收到的对象为空");
+                    }
+                    System.out.println("Message receive : " + reader.readTextMessage(inputStream));
+                    lastActionTime = System.currentTimeMillis();
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
             }
         }
     }

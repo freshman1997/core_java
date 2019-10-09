@@ -21,8 +21,6 @@ public class ServerMessageReader implements MessageReader{
                 break;
             builder.append(s);
         }
-
-
         return builder.toString();
     }
 }

@@ -76,7 +76,7 @@ public class TestInstant {
     }
     @Test
     public void test4(){
-        int n = 1000000001;
+        int n = Integer.MAX_VALUE;
         System.out.println(isPalindrome(n));
         //System.out.println(1000000000 * 10);
     }
@@ -88,7 +88,6 @@ public class TestInstant {
         long i = 10L;
         while (x % i != x){
             i = i * 10;
-            System.out.println(i);
             c++;
         }
 
@@ -96,7 +95,6 @@ public class TestInstant {
         int k = 0;
         for (int j = (int) (i / 10); c > 0 && i != 0 && j != 0; j = j / 10) {
             arr[k] = (int) (x % i / j);
-            //System.out.println(x % i);
             k++;
             i = i / 10;
             c--;
@@ -105,9 +103,7 @@ public class TestInstant {
         c = arr.length - 1;
 
         for (int j = 0; j < arr.length / 2; j++) {
-
             if (arr[j] == arr[c]){
-                //System.out.println(arr[c]);
                 c --;
                 k++;
             }

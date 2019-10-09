@@ -4,8 +4,8 @@ import java.lang.reflect.Proxy;
 
 public final class ProxyUtil {
     private static Interpreter interpreter;
-    public static void setInterpreter(Class<? extends Interpreter> interpreter){
-        interpreter = interpreter;
+    public static void setInterpreter(Interpreter interpreter1){
+        interpreter = interpreter1;
     }
     public static Interpreter getInterpreter() {
         if(interpreter == null)

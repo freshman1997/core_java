@@ -2,6 +2,7 @@ package com.yuan.cn.network.demo2;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -112,7 +113,7 @@ public class Searcher {
                     String ip = receivedPacket.getAddress().getHostAddress();
                     int port = receivedPacket.getPort();
                     int dataLen = receivedPacket.getLength();
-                    String data = new String(receivedPacket.getData(),0, dataLen,"UTF-8");
+                    String data = new String(receivedPacket.getData(),0, dataLen, StandardCharsets.UTF_8);
                     System.out.println("Searcher receive from IP :"+ip+"\tport:"+port+"\t receive data:"+data);
 
                     String sn = MessageCreator.parseSn(data);
@@ -126,7 +127,7 @@ public class Searcher {
                 }
             }catch (Exception e)
             {
-
+                e.printStackTrace();
             }finally {
                 close();
             }

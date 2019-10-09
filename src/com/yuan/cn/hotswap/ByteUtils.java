@@ -26,7 +26,7 @@ public class ByteUtils {
         byte[] b = new byte[length];
         for (int i =0; i < length; i++)
         {
-            b[length -i -1 ] = (byte) ((value >> 8 * i) &0xff);
+            b[length -i -1 ] = (byte) ((value >> 8 * i) & 0xff);
         }
         return b;
     }
